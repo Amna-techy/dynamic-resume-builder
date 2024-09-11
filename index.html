@@ -10,20 +10,32 @@
     <div class="container">
         <form id="resume-form">
             <h2>Personal Information</h2>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required>
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
-            <label for="profile-picture">Profile Picture URL:</label>
-            <input type="url" id="profile-picture" name="profile-picture">
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required>
+            <label for="profile-picture">Profile Picture:</label>
+            <input type="file" id="profile-picture" name="profile-picture" accept="image/*">
             
             <h2>Education</h2>
-            <label for="education">Education:</label>
-            <textarea id="education" name="education" required></textarea>
+            <label for="institution">Institution:</label>
+            <input type="text" id="institution" name="institution" required>
+            <label for="course">Course:</label>
+            <input type="text" id="course" name="course" required>
+            <label for="passing-year">Passing Year:</label>
+            <input type="number" id="passing-year" name="passing-year" required>
             
             <h2>Work Experience</h2>
-            <label for="work-experience">Work Experience:</label>
-            <textarea id="work-experience" name="work-experience" required></textarea>
+            <label for="organization">Organization:</label>
+            <input type="text" id="organization" name="organization" required>
+            <label for="position">Position:</label>
+            <input type="text" id="position" name="position" required>
+            <label for="years">Years:</label>
+            <input type="number" id="years" name="years" required>
             
             <h2>Skills</h2>
             <label for="skills">Skills:</label>
@@ -35,21 +47,28 @@
         <div class="resume" id="resume">
             <section id="personal-info">
                 <img src="" alt="Profile Picture" class="profile-pic" id="resume-profile-pic">
-                <h1 id="resume-name"></h1>
-                <p id="resume-email"></p>
+                <h1 id="resume-name" contenteditable="true"></h1>
+                <p id="resume-email" contenteditable="true"></p>
+                <p id="resume-phone" contenteditable="true"></p>
             </section>
             <section id="education">
                 <h2>Education</h2>
-                <p id="resume-education"></p>
-            </section>
-            <section id="skills">
-                <h2>Skills</h2>
-                <ul id="resume-skills"></ul>
+                <p id="resume-institution" contenteditable="true"></p>
+                <p id="resume-course" contenteditable="true"></p>
+                <p id="resume-passing-year" contenteditable="true"></p>
             </section>
             <section id="work-experience">
                 <h2>Work Experience</h2>
-                <p id="resume-work-experience"></p>
+                <p id="resume-organization" contenteditable="true"></p>
+                <p id="resume-position" contenteditable="true"></p>
+                <p id="resume-years" contenteditable="true"></p>
             </section>
+            <section id="skills">
+                <h2>Skills</h2>
+                <ul id="resume-skills" contenteditable="true"></ul>
+            </section>
+            <button id="print-resume">Print Resume</button>
+            <button id="share-link">Share Link</button>
         </div>
     </div>
     <script src="scripts.js" defer></script>

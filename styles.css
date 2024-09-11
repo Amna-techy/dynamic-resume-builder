@@ -1,8 +1,22 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 20px;
+    background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+    animation: gradient 5s ease infinite;
+    background-size: 400% 400%;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .container {
@@ -32,14 +46,14 @@ form input, form textarea, form button {
 }
 
 form button {
-    background-color: #4CAF50;
+    background-color: #007bff;
     color: white;
     border: none;
     cursor: pointer;
 }
 
 form button:hover {
-    background-color: #45a049;
+    background-color: #0056b3;
 }
 
 .resume {
@@ -64,6 +78,27 @@ h1, h2 {
 
 section {
     margin-bottom: 20px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+[contenteditable="true"] {
+    border: 1px dashed #ccc;
+    padding: 5px;
+    border-radius: 4px;
+    outline: none;
 }
 
 @media (max-width: 600px) {
