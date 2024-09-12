@@ -8,7 +8,7 @@
 </head>
 <body>
   <form id="resume-form">
-    <h1>Dynamic Resume Builder By Amna Zameer</h1>
+    <h1>Resume Builder by Amna Zameer</h1>
     <div class="form-group">
       <label for="name">Name:</label>
       <input type="text" id="name" placeholder="Name" required>
@@ -46,7 +46,7 @@
         <div class="work-experience-entry">
           <input type="text" class="work-experience-position" placeholder="Position" required>
           <input type="text" class="work-experience-organization" placeholder="Organization Name" required>
-          <input type="text" class="work-experience-years" placeholder="Active Years" required>
+          <input type="text" class="work-experience-years" placeholder="Active Years (in numbers)" required>
         </div>
       </div>
       <button type="button" id="add-work-experience">Add More Work Experience</button>
@@ -58,11 +58,8 @@
     <button type="submit">Generate Resume</button>
   </form>
 
-  <div id="resume" style="display:none;">
-    <button id="download-pdf">Download as PDF</button>
-    <button id="share-link" style="display:none;">Share Resume Link</button>
-    <div id="resume-content"></div>
-  </div>
+  <div id="resume"></div>
+  <button id="download-pdf" style="display:none;">Download as PDF</button>
 
   <script src="script.js"></script>
 </body>

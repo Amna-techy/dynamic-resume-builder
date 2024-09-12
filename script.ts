@@ -1,110 +1,104 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('resume-form') as HTMLFormElement;
-    const resume = document.getElementById('resume') as HTMLDivElement;
-    const resumeContent = document.getElementById('resume-content') as HTMLDivElement;
-    const downloadPdfButton = document.getElementById('download-pdf') as HTMLButtonElement;
-    const shareLinkButton = document.getElementById('share-link') as HTMLButtonElement;
-    const addEducationButton = document.getElementById('add-education') as HTMLButtonElement;
-    const addWorkExperienceButton = document.getElementById('add-work-experience') as HTMLButtonElement;
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("resume-form") as HTMLFormElement;
+  const resumeContainer = document.getElementById("resume") as HTMLDivElement;
+  const downloadButton = document.getElementById("download-pdf") as HTMLButtonElement;
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
+  // Function to handle form submission and resume generation
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-        const name = (document.getElementById('name') as HTMLInputElement).value;
-        const phone = (document.getElementById('phone') as HTMLInputElement).value;
-        const email = (document.getElementById('email') as HTMLInputElement).value;
-        const profilePicture = (document.getElementById('profile-picture') as HTMLInputElement).files![0];
-        const username = (document.getElementById('username') as HTMLInputElement).value;
+    const name = (document.getElementById("name") as HTMLInputElement).value;
+    const phone = (document.getElementById("phone") as HTMLInputElement).value;
+    const email = (document.getElementById("email") as HTMLInputElement).value;
+    const profilePictureInput = document.getElementById("profile-picture") as HTMLInputElement;
+    const skills = (document.getElementById("skills") as HTMLInputElement).value.split(",");
+    const username = (document.getElementById("username") as HTMLInputElement).value;
 
-        const educationSection = document.getElementById('education-section')!;
-        const educationEntries = Array.prototype.slice.call(educationSection.getElementsByClassName('education-entry'));
-        const educationContent = educationEntries.map(entry => {
-            const course = (entry.getElementsByClassName('education-course')[0] as HTMLInputElement).value;
-            const year = (entry.getElementsByClassName('education-year')[0] as HTMLInputElement).value;
-            const institution = (entry.getElementsByClassName('education-institution')[0] as HTMLInputElement).value;
-            return `<p>${course}, ${year}, ${institution}</p>`;
-        }).join('');
+    // Collect education entries
+    const educationEntries = Array.from(document.querySelectorAll(".education-entry")).map(entry => ({
+      course: (entry.querySelector(".education-course") as HTMLInputElement).value,
+      year: (entry.querySelector(".education-year") as HTMLInputElement).value,
+      institution: (entry.querySelector(".education-institution") as HTMLInputElement).value,
+    }));
 
-        const workExperienceSection = document.getElementById('work-experience-section')!;
-        const workExperienceEntries = Array.prototype.slice.call(workExperienceSection.getElementsByClassName('work-experience-entry'));
-        const workExperienceContent = workExperienceEntries.map(entry => {
-            const place = (entry.getElementsByClassName('work-experience-place')[0] as HTMLInputElement).value;
-            const organization = (entry.getElementsByClassName('work-experience-organization')[0] as HTMLInputElement).value;
-            const years = (entry.getElementsByClassName('work-experience-years')[0] as HTMLInputElement).value;
-            return `<p>${place}, ${organization}, ${years}</p>`;
-        }).join('');
+    // Collect work experience entries
+    const workExperienceEntries = Array.from(document.querySelectorAll(".work-experience-entry")).map(entry => ({
+      position: (entry.querySelector(".work-experience-position") as HTMLInputElement).value,
+      organization: (entry.querySelector(".work-experience-organization") as HTMLInputElement).value,
+      years: (entry.querySelector(".work-experience-years") as HTMLInputElement).value,
+    }));
 
-        const skills = (document.getElementById('skills') as HTMLInputElement).value.split(',').map(skill => `<li>${skill.trim()}</li>`).join('');
+    // Handle profile picture
+    let profilePictureURL = "";
 
-        resumeContent.innerHTML = `
-            <h1>${name}</h1>
-            <div id="resume-profile-pic"></div>
-            <p>${email}</p>
-            <p>${phone}</p>
-            <section id="education-section">
-                <h2>Education</h2>
-                ${educationContent}
-            </section>
-            <section id="work-experience-section">
-                <h2>Work Experience</h2>
-                ${workExperienceContent}
-            </section>
-            <section id="skills-section">
-                <h2>Skills</h2>
-                <ul>${skills}</ul>
-            </section>
-        `;
+    if (profilePictureInput.files && profilePictureInput.files.length > 0) {
+      const file = profilePictureInput.files[0];
+      profilePictureURL = URL.createObjectURL(file);
+    }
 
-        if (profilePicture) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = document.createElement('img');
-                img.src = e.target?.result as string;
-                document.getElementById('resume-profile-pic')?.appendChild(img);
-            };
-            reader.readAsDataURL(profilePicture);
-        }
+    // Generate the resume content
+    resumeContainer.innerHTML = `
+      <section class="personal-info printable">
+        <img src="${profilePictureURL}" alt="Profile Picture" style="width:100px;height:100px;">
+        <h1 contenteditable="true" class="editable">${name}</h1>
+        <p contenteditable="true" class="editable">Contact Details: ${phone}, ${email}</p>
+      </section>
+      <section class="education printable">
+        <h2>Education</h2>
+        ${educationEntries.map(entry => `
+          <div>
+            <strong>${entry.course}</strong> (${entry.year}) at ${entry.institution}
+          </div>
+        `).join('')}
+      </section>
+      <section class="skills printable">
+        <h2>Skills</h2>
+        <ul contenteditable="true" class="editable">
+          ${skills.map(skill => `<li>${skill.trim()}</li>`).join('')}
+        </ul>
+      </section>
+      <section class="work-experience printable">
+        <h2>Work Experience</h2>
+        ${workExperienceEntries.map(entry => `
+          <div>
+            <strong>${entry.position}</strong>, ${entry.organization} (${entry.years})
+          </div>
+        `).join('')}
+      </section>
+    `;
 
-        // Display resume and buttons
-        resume.style.display = 'block';
-        downloadPdfButton.style.display = 'block';
-        shareLinkButton.style.display = 'block';
-        shareLinkButton.onclick = () => {
-            const link = `${window.location.origin}/resume/${username}`;
-            navigator.clipboard.writeText(link).then(() => {
-                alert('Resume link copied to clipboard!');
-            });
-        };
-    });
+    // Make the download button visible
+    downloadButton.style.display = "block";
+  });
 
-    // Add Education Entry
-    addEducationButton.addEventListener('click', () => {
-        const educationSection = document.getElementById('education-section')!;
-        const entry = document.createElement('div');
-        entry.className = 'education-entry';
-        entry.innerHTML = `
-            <input type="text" class="education-course" placeholder="Course" required>
-            <input type="text" class="education-year" placeholder="Passing Year" required>
-            <input type="text" class="education-institution" placeholder="Institution Name" required>
-        `;
-        educationSection.appendChild(entry);
-    });
+  // Download PDF functionality
+  downloadButton.addEventListener("click", () => {
+    // Trigger print dialog
+    window.print();
+  });
 
-    // Add Work Experience Entry
-    addWorkExperienceButton.addEventListener('click', () => {
-        const workExperienceSection = document.getElementById('work-experience-section')!;
-        const entry = document.createElement('div');
-        entry.className = 'work-experience-entry';
-        entry.innerHTML = `
-            <input type="text" class="work-experience-position" placeholder="Position" required>
-            <input type="text" class="work-experience-organization" placeholder="Organization Name" required>
-            <input type="text" class="work-experience-years" placeholder="Active Years" required>
-        `;
-        workExperienceSection.appendChild(entry);
-    });
+  // Add event listeners for dynamically adding new entries
+  document.getElementById("add-education")?.addEventListener("click", () => {
+    const educationSection = document.getElementById("education-section") as HTMLDivElement;
+    const newEntry = document.createElement("div");
+    newEntry.classList.add("education-entry");
+    newEntry.innerHTML = `
+      <input type="text" class="education-course" placeholder="Course" required>
+      <input type="text" class="education-year" placeholder="Passing Year" required>
+      <input type="text" class="education-institution" placeholder="Institution Name" required>
+    `;
+    educationSection.appendChild(newEntry);
+  });
 
-    // Download as PDF
-    downloadPdfButton.addEventListener('click', () => {
-        window.print();
-    });
+  document.getElementById("add-work-experience")?.addEventListener("click", () => {
+    const workExperienceSection = document.getElementById("work-experience-section") as HTMLDivElement;
+    const newEntry = document.createElement("div");
+    newEntry.classList.add("work-experience-entry");
+    newEntry.innerHTML = `
+      <input type="text" class="work-experience-position" placeholder="Position" required>
+      <input type="text" class="work-experience-organization" placeholder="Organization Name" required>
+      <input type="text" class="work-experience-years" placeholder="Active Years (in numbers)" required>
+    `;
+    workExperienceSection.appendChild(newEntry);
+  });
 });

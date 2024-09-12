@@ -1,75 +1,58 @@
-document.addEventListener('DOMContentLoaded', function () {
-    var form = document.getElementById('resume-form');
-    var resume = document.getElementById('resume');
-    var resumeContent = document.getElementById('resume-content');
-    var downloadPdfButton = document.getElementById('download-pdf');
-    var shareLinkButton = document.getElementById('share-link');
-    var addEducationButton = document.getElementById('add-education');
-    var addWorkExperienceButton = document.getElementById('add-work-experience');
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var name = document.getElementById('name').value;
-        var phone = document.getElementById('phone').value;
-        var email = document.getElementById('email').value;
-        var profilePicture = document.getElementById('profile-picture').files[0];
-        var username = document.getElementById('username').value;
-        var educationSection = document.getElementById('education-section');
-        var educationEntries = Array.prototype.slice.call(educationSection.getElementsByClassName('education-entry'));
-        var educationContent = educationEntries.map(function (entry) {
-            var course = entry.getElementsByClassName('education-course')[0].value;
-            var year = entry.getElementsByClassName('education-year')[0].value;
-            var institution = entry.getElementsByClassName('education-institution')[0].value;
-            return "<p>".concat(course, ", ").concat(year, ", ").concat(institution, "</p>");
-        }).join('');
-        var workExperienceSection = document.getElementById('work-experience-section');
-        var workExperienceEntries = Array.prototype.slice.call(workExperienceSection.getElementsByClassName('work-experience-entry'));
-        var workExperienceContent = workExperienceEntries.map(function (entry) {
-            var place = entry.getElementsByClassName('work-experience-place')[0].value;
-            var organization = entry.getElementsByClassName('work-experience-organization')[0].value;
-            var years = entry.getElementsByClassName('work-experience-years')[0].value;
-            return "<p>".concat(place, ", ").concat(organization, ", ").concat(years, "</p>");
-        }).join('');
-        var skills = document.getElementById('skills').value.split(',').map(function (skill) { return "<li>".concat(skill.trim(), "</li>"); }).join('');
-        resumeContent.innerHTML = "\n            <h1>".concat(name, "</h1>\n            <div id=\"resume-profile-pic\"></div>\n            <p>").concat(email, "</p>\n            <p>").concat(phone, "</p>\n            <section id=\"education-section\">\n                <h2>Education</h2>\n                ").concat(educationContent, "\n            </section>\n            <section id=\"work-experience-section\">\n                <h2>Work Experience</h2>\n                ").concat(workExperienceContent, "\n            </section>\n            <section id=\"skills-section\">\n                <h2>Skills</h2>\n                <ul>").concat(skills, "</ul>\n            </section>\n        ");
-        if (profilePicture) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var _a, _b;
-                var img = document.createElement('img');
-                img.src = (_a = e.target) === null || _a === void 0 ? void 0 : _a.result;
-                (_b = document.getElementById('resume-profile-pic')) === null || _b === void 0 ? void 0 : _b.appendChild(img);
-            };
-            reader.readAsDataURL(profilePicture);
+document.addEventListener("DOMContentLoaded", function () {
+    var _a, _b;
+    var form = document.getElementById("resume-form");
+    var resumeContainer = document.getElementById("resume");
+    var downloadButton = document.getElementById("download-pdf");
+    // Function to handle form submission and resume generation
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var name = document.getElementById("name").value;
+        var phone = document.getElementById("phone").value;
+        var email = document.getElementById("email").value;
+        var profilePictureInput = document.getElementById("profile-picture");
+        var skills = document.getElementById("skills").value.split(",");
+        var username = document.getElementById("username").value;
+        // Collect education entries
+        var educationEntries = Array.from(document.querySelectorAll(".education-entry")).map(function (entry) { return ({
+            course: entry.querySelector(".education-course").value,
+            year: entry.querySelector(".education-year").value,
+            institution: entry.querySelector(".education-institution").value,
+        }); });
+        // Collect work experience entries
+        var workExperienceEntries = Array.from(document.querySelectorAll(".work-experience-entry")).map(function (entry) { return ({
+            position: entry.querySelector(".work-experience-position").value,
+            organization: entry.querySelector(".work-experience-organization").value,
+            years: entry.querySelector(".work-experience-years").value,
+        }); });
+        // Handle profile picture
+        var profilePictureURL = "";
+        if (profilePictureInput.files && profilePictureInput.files.length > 0) {
+            var file = profilePictureInput.files[0];
+            profilePictureURL = URL.createObjectURL(file);
         }
-        // Display resume and buttons
-        resume.style.display = 'block';
-        downloadPdfButton.style.display = 'block';
-        shareLinkButton.style.display = 'block';
-        shareLinkButton.onclick = function () {
-            var link = "".concat(window.location.origin, "/resume/").concat(username);
-            navigator.clipboard.writeText(link).then(function () {
-                alert('Resume link copied to clipboard!');
-            });
-        };
+        // Generate the resume content
+        resumeContainer.innerHTML = "\n      <section class=\"personal-info printable\">\n        <img src=\"".concat(profilePictureURL, "\" alt=\"Profile Picture\" style=\"width:100px;height:100px;\">\n        <h1 contenteditable=\"true\" class=\"editable\">").concat(name, "</h1>\n        <p contenteditable=\"true\" class=\"editable\">Contact Details: ").concat(phone, ", ").concat(email, "</p>\n      </section>\n      <section class=\"education printable\">\n        <h2>Education</h2>\n        ").concat(educationEntries.map(function (entry) { return "\n          <div>\n            <strong>".concat(entry.course, "</strong> (").concat(entry.year, ") at ").concat(entry.institution, "\n          </div>\n        "); }).join(''), "\n      </section>\n      <section class=\"skills printable\">\n        <h2>Skills</h2>\n        <ul contenteditable=\"true\" class=\"editable\">\n          ").concat(skills.map(function (skill) { return "<li>".concat(skill.trim(), "</li>"); }).join(''), "\n        </ul>\n      </section>\n      <section class=\"work-experience printable\">\n        <h2>Work Experience</h2>\n        ").concat(workExperienceEntries.map(function (entry) { return "\n          <div>\n            <strong>".concat(entry.position, "</strong>, ").concat(entry.organization, " (").concat(entry.years, ")\n          </div>\n        "); }).join(''), "\n      </section>\n    ");
+        // Make the download button visible
+        downloadButton.style.display = "block";
     });
-    // Add Education Entry
-    addEducationButton.addEventListener('click', function () {
-        var educationSection = document.getElementById('education-section');
-        var entry = document.createElement('div');
-        entry.className = 'education-entry';
-        entry.innerHTML = "\n            <input type=\"text\" class=\"education-course\" placeholder=\"Course\" required>\n            <input type=\"text\" class=\"education-year\" placeholder=\"Passing Year\" required>\n            <input type=\"text\" class=\"education-institution\" placeholder=\"Institution Name\" required>\n        ";
-        educationSection.appendChild(entry);
-    });
-    // Add Work Experience Entry
-    addWorkExperienceButton.addEventListener('click', function () {
-        var workExperienceSection = document.getElementById('work-experience-section');
-        var entry = document.createElement('div');
-        entry.className = 'work-experience-entry';
-        entry.innerHTML = "\n            <input type=\"text\" class=\"work-experience-position\" placeholder=\"Position\" required>\n            <input type=\"text\" class=\"work-experience-organization\" placeholder=\"Organization Name\" required>\n            <input type=\"text\" class=\"work-experience-years\" placeholder=\"Active Years\" required>\n        ";
-        workExperienceSection.appendChild(entry);
-    });
-    // Download as PDF
-    downloadPdfButton.addEventListener('click', function () {
+    // Download PDF functionality
+    downloadButton.addEventListener("click", function () {
+        // Trigger print dialog
         window.print();
+    });
+    // Add event listeners for dynamically adding new entries
+    (_a = document.getElementById("add-education")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", function () {
+        var educationSection = document.getElementById("education-section");
+        var newEntry = document.createElement("div");
+        newEntry.classList.add("education-entry");
+        newEntry.innerHTML = "\n      <input type=\"text\" class=\"education-course\" placeholder=\"Course\" required>\n      <input type=\"text\" class=\"education-year\" placeholder=\"Passing Year\" required>\n      <input type=\"text\" class=\"education-institution\" placeholder=\"Institution Name\" required>\n    ";
+        educationSection.appendChild(newEntry);
+    });
+    (_b = document.getElementById("add-work-experience")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", function () {
+        var workExperienceSection = document.getElementById("work-experience-section");
+        var newEntry = document.createElement("div");
+        newEntry.classList.add("work-experience-entry");
+        newEntry.innerHTML = "\n      <input type=\"text\" class=\"work-experience-position\" placeholder=\"Position\" required>\n      <input type=\"text\" class=\"work-experience-organization\" placeholder=\"Organization Name\" required>\n      <input type=\"text\" class=\"work-experience-years\" placeholder=\"Active Years (in numbers)\" required>\n    ";
+        workExperienceSection.appendChild(newEntry);
     });
 });
